@@ -91,11 +91,83 @@ weather_df %>%
   facet_grid (. ~ name)
 ```
 
+## Some small notes
+how many geoms have to exist?
 
+You can have whatever geoms you want
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, y=tmax, color=name)) +
+  geom_smooth(se=FALSE)
+```
+You can use a neat geom!
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, y=tmax)) +
+  geom_hex()
 
+#can also use geom_density2d like a contour plot
 
+weather_df %>%
+  ggplot(aes(x=tmin, y=tmax)) +
+  geom_densit2d() +
+  geom_point(alpha = .3)
+```
 
+## Univariate plots
+histograms are really great.
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin)) +
+  geom_histogram()
+```
+can we add color ...
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, fill=name)) +
+  geom_histogram(position = "dodge") # instead of stack on top of each other, I want it to dodge
+# stack the colors
 
+# can also do this
+weather_df %>%
+  ggplot(aes(x=tmin, fill=name)) +
+  geom_histogram( )+
+  facet_grid(.~ name)
+```
+
+let's try a new geometry
+
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, fill=name)) +
+  geom_density(alpha = .3, adjust=.5)
+```
+
+what about boxplots??
+```{r}
+weather_df %>%
+  ggplot(aes(x = name, y = tmin)) + # x axis is a categorical variable
+  geom_boxplot()
+```
+
+Trendy plots
+geom_violin, a cross between a box plot and a density plot
+```{r}
+weather_df%>%
+  ggplot(aes(x=name, y=tmin, fill = name)) +
+  geom_violin(alpha = .5) +
+  stat_summary(fun = "median")
+```
+
+ridge plots- the most popular plot of 2017
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, y=name)) +
+  geom_density_ridges()
+```
+```{r}
+library(ggridges)
+```
 
 
 
