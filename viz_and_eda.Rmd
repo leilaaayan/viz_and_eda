@@ -1,0 +1,108 @@
+---
+title: "viz_and_eda"
+author: "Leila Yan"
+date: "2024-09-26"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggridges)
+```
+rnoaa is a package, allows you to access public data online that's aggregated
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USW00022534", "USS0023B17S"), #three weather stations
+    var = c("PRCP", "TMIN", "TMAX"), #the variables I want
+    date_min = "2017-01-01", #starting date
+    date_max = "2017-12-31") |> #ending data
+  mutate(
+    name = case_match(
+      id, 
+      "USW00094728" ~ "CentralPark_NY", 
+      "USW00022534" ~ "Molokai_HI",
+      "USS0023B17S" ~ "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) |>
+  select(name, id, everything())
+
+weather_df
+```
+## Scatterplots
+create my first scatterplot ever
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point()
+
+```
+
+new approach, same plot
+```{r}
+weather_df %>%
+  ggplot(aes(x= tmin, y=tmax)) +
+  geom_point()
+```
+save and edit a plot object
+```{r}
+weather_plot = 
+  weather_df %>%
+  ggplot (aes(x=tmin, y=tmax))
+
+weather_plot + geom_point()
+```
+## advanced scatterplot...
+
+start with the same one and make it fancy
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmin, y=tmax, color = name)) + 
+  geom_point() +
+  geom_smooth(se = FALSE) # smooth curves that run through dataset
+```
+what about the aes placement?
+
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmin, y=tmax)) + 
+  geom_point(aes(color=name)) +
+  geom_smooth()
+```
+let's facet some things
+
+```{r}
+weather_df %>%
+  ggplot (aes(x=tmin, y=tmax, color = name)) + 
+  geom_point(alpha = .2, size = .3) +
+# alpha refers to transparancy
+  geom_smooth(se = FALSE) +
+  facet_grid (. ~ name) # multi panel plot
+# name defines column, "." nothing defines row; basically no rows but column; you can also reverse it and do (name ~ .)
+```
+
+let's combine some elements and try a new plot
+```{r}
+weather_df %>%
+  ggplot(aes(x= date, y= tmax, color = name,)) +
+  geom_point(aes(size= prcp), alpha = .5) +
+  # map precipitation "ptcp"
+  geom_smooth(se = FALSE) +
+  facet_grid (. ~ name)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
