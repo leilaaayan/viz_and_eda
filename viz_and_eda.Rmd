@@ -325,9 +325,82 @@ scale_color_discrete = scale_color_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
+## Data args in "geom"
+```{r}
+central_park = 
+  weather_df %>%
+  filter (name=="CentralPark_NY")
 
+waikki = 
+  weather_df %>%
+  filter (name =="Waikiki_HA")
 
+ggplot(data=waikki, aes(x=date, y=tmax, color = name)) +
+  geom_point()+
+  geom_line(data = central_park)
+```
 
+## patchwork
+facetin
+create a 3-panel plot
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, color=name)) +
+  geom_density(alpha = .5) +
+  facet_grid(. ~name)
+```
+
+what happens when you want multipanel plots but can't facet?
+
+```{r}
+tmax_tmin_p=
+  weather_df %>%
+  ggplot(aes(x=tmin, y=tmax, color = name)) +
+  geom_point(alpha = .5) +
+  theme(legend.position = "none")
+
+prcp_des_p = 
+  weather_df %>%
+  filter(prcp >0) %>%
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density(alpha = .5)
+
+tmax_data_p = 
+  weather_df %>%
+  ggplot(aes(x=date, y=tmax, color=name)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme(legend.position = "none")
+
+tmax_tmin_p + (prcp_des_p + tmax_data_p)
+```
+## Data manipulation
+control your factors.
+```{r}
+weather_df %>%
+  mutate(
+    name = factor(name),
+    name = forcats::fct_relevel(name, c("Waikiki_HA")) # relevel this so that waikiki is in the first order
+  ) %>%
+  ggplot(aes(x=name, y=tmax, fill=name)) +
+  geom_violin(alpha=.5)
+```
+
+what if I wanted densities for tmin and tmax simultaneously
+```{r}
+weather_df %>%
+  filter(name == "CentralPark_NY") %>%
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperatures"
+  ) %>%
+  ggplot(aes(x = temperatures, fill=observation)) +
+  geom_density(alpha = .5) +
+  facet_grid(. ~name)
+  
+# create a density plot that shows temperature as the variable on x axis and separate the minimum from the maximum
+```
 
 
 
