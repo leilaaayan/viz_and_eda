@@ -8,6 +8,7 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(ggridges)
+library(patchwork)
 ```
 rnoaa is a package, allows you to access public data online that's aggregated
 ```{r}
@@ -197,8 +198,25 @@ weather_plot
 weather_plot
 ```
 
+Data visualization II
 
+## remember this plot??
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, y=tmax, color=name)) +
+  geom_point(alpha=.5)
+```
 
-
+## Labels
+```{r}
+weather_df %>%
+  ggplot(aes(x=tmin, y=tmax, color=name)) +
+  geom_point(alpha=.5) +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature(C)",
+    y= "Maximum daily temperature (C)",
+    caption = "Data fromrnoaa package; temperatures in 2017." )
+```
 
 
